@@ -1,0 +1,40 @@
+{
+	"folders": [
+		{
+			"name": "DevSpaces",
+			"path": "/projects/devspaces"
+		},
+		{
+			"name": "Ansible EE RHEL8",
+			"path": "/projects/ansible-ee-cez-rhel8"
+		},
+		{
+			"name": "Ansible EE RHEL9",
+			"path": "/projects/ansible-ee-cez-rhel9"
+		},
+		{
+			"name": "ATM",
+			"path": "/projects/atm"
+		}
+	],
+	"extensions": {
+		"recommendations": [
+			"redhat.java",
+			"redhat.ansible",
+			"redhat.vscode-yaml",
+			"redhat.vscode-xml",
+			"redhat.vscode-openshift-connector",
+			"dhoeric.ansible-vault",
+			"ms-python.python",
+			"ms-python.black-formatter",
+			"cnshenj.vscode-task-manager",
+			"gitlab.gitlab-workflow",
+			"johnpapa.winteriscoming"
+		]
+	},
+	"settings": {
+		"workbench.colorTheme": "Winter is Coming (Dark Blue)",
+		"workbench.preferredDarkColorTheme": "Winter is Coming (Dark Blue)",
+		"workbench.preferredLightColorTheme": "Winter is Coming (Light)"
+	}
+}

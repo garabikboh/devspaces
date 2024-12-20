@@ -1,0 +1,230 @@
+schemaVersion: 2.3.0
+metadata:
+  name: ansible
+  # generateName: ansible
+components:
+  # - name: ansible-creator # 1.84 GB
+  #   container:
+  #     image: quay.io/devspaces/ansible-creator-ee:latest
+  #     memoryRequest: 256M
+  #     memoryLimit: 6Gi
+  #     cpuRequest: 250m
+  #     cpuLimit: 2000m
+  #     args: ['tail', '-f', '/dev/null']
+  #     env:
+  #       - name: 'ANSIBLE_COLLECTIONS_PATH'
+  #         value: '~/.ansible/collections:/usr/share/ansible/collections:/projects/devspaces/collections'
+
+  - name: ansible-devspaces # 5.69 GB
+    container:
+      image: ghcr.io/ansible/ansible-devspaces:latest
+      memoryRequest: 256M
+      memoryLimit: 6Gi
+      cpuRequest: 250m
+      cpuLimit: 2000m
+      args: ['tail', '-f', '/dev/null']
+      env:
+        - name: 'ANSIBLE_COLLECTIONS_PATH'
+          value: '~/.ansible/collections:/usr/share/ansible/collections:/projects/devspaces/collections'
+
+  # - name: ansible-workspace # 7.96 GB
+  #   container:
+  #     image: ghcr.io/ansible/ansible-workspace-env-reference:latest
+  #     memoryRequest: 256M
+  #     memoryLimit: 6Gi
+  #     cpuRequest: 250m
+  #     cpuLimit: 2000m
+  #     args: ['tail', '-f', '/dev/null']
+  #     env:
+  #       - name: 'ANSIBLE_COLLECTIONS_PATH'
+  #         value: '~/.ansible/collections:/usr/share/ansible/collections:/projects/devspaces/collections'
+  #       - name: KUBEDOCK_ENABLED
+  #         value: "true"
+
+  - name: ansible-ee-supported-rhel8
+    container:
+      image: registry.redhat.io/ansible-automation-platform-25/ee-supported-rhel8:latest
+      memoryRequest: 256M
+      memoryLimit: 6Gi
+      cpuRequest: 250m
+      cpuLimit: 2000m
+      args: ['tail', '-f', '/dev/null']
+      env:
+        - name: 'ANSIBLE_COLLECTIONS_PATH'
+          value: '~/.ansible/collections:/usr/share/ansible/collections:/projects/devspaces/collections'
+
+  - name: ansible-ee-supported-rhel9
+    container:
+      image: registry.redhat.io/ansible-automation-platform-25/ee-supported-rhel9:latest
+      memoryRequest: 256M
+      memoryLimit: 6Gi
+      cpuRequest: 250m
+      cpuLimit: 2000m
+      args: ['tail', '-f', '/dev/null']
+      env:
+        - name: 'ANSIBLE_COLLECTIONS_PATH'
+          value: '~/.ansible/collections:/usr/share/ansible/collections:/projects/devspaces/collections'
+
+  - name: universal-developer-image
+    container:
+      image: registry.redhat.io/devspaces/udi-rhel8:latest
+      memoryRequest: 256M
+      memoryLimit: 6G
+      cpuRequest: 250m
+      cpuLimit: 2000m
+
+  - name: web-terminal-tooling
+    container:
+      cpuRequest: 100m
+      cpuLimit: 400m
+      memoryRequest: 128Mi
+      memoryLimit: 1Gi
+      env:
+        - name: OCP_NAME
+          value: occ
+      # sourceMapping: /projects
+      volumeMounts:
+        - name: home-storage
+          path: /home/user
+      image: 'central-docker-release.artif.cc.corp/cez/web-terminal-tooling:1.3.2'
+      args:
+        - tail
+        - '-f'
+        - /dev/null
+      mountSources: false
+
+  # - volume:
+  #     size: 2Gi
+  #   name: projects
+
+  - volume:
+      size: 2Gi
+    name: home-storage
+
+commands:
+  - id: ansible-playbook
+    exec:
+      label: "Ansible: Run ansible-playbook"
+      commandLine: "ansible-playbook"
+      workingDir: ${PROJECTS_ROOT}/devspaces
+      component: ansible-devspaces
+
+  - id: ansible-navigator
+    exec:
+      label: "Ansible-Navigator: Start ansible-navigator"
+      commandLine: |
+        if [ ! -d "$HOME/.cache/ansible-navigator" ]; then
+          mkdir -p "$HOME/.cache/ansible-navigator"
+        fi
+        cp /usr/local/lib/python3.11/site-packages/ansible_navigator/data/catalog_collections.py $HOME/.cache/ansible-navigator
+        ansible-navigator --ee false
+      workingDir: ${PROJECTS_ROOT}/devspaces
+      component: ansible-devspaces
+
+  # - id: oc-install
+  #   exec:
+  #     commandLine: '/usr/local/bin/ansible-playbook ${PROJECT_SOURCE}/playbooks/install_oc.yml'
+  #     workingDir: ${PROJECT_SOURCE}
+  #     group:
+  #       kind: build
+  #       isDefault: true
+  #     component: ansible-devspaces
+
+  - id: molecule-create
+    exec:
+      label: "1.Molecule: start a test pod for the automation"
+      commandLine: 'source $HOME/.bashrc && molecule create'
+      workingDir: ${PROJECTS_ROOT}/devspaces/collections/ansible_collections/sample_namespace/sample_collection/extensions
+      group:
+        kind: run
+        isDefault: true
+      component: ansible-devspaces
+
+  - id: molecule-list
+    exec:
+      label: "2.Molecule: view the test instance that was created"
+      commandLine: 'source $HOME/.bashrc && molecule list'
+      workingDir: ${PROJECTS_ROOT}/devspaces/collections/ansible_collections/sample_namespace/sample_collection/extensions
+      group:
+        kind: run
+        isDefault: true
+      component: ansible-devspaces
+
+  - id: molecule-verify
+    exec:
+      label: "3.Molecule: run the verification against the test pod"
+      commandLine: 'source $HOME/.bashrc && molecule verify'
+      workingDir: ${PROJECTS_ROOT}/devspaces/collections/ansible_collections/sample_namespace/sample_collection/extensions
+      group:
+        kind: run
+        isDefault: true
+      component: ansible-devspaces
+
+  - id: molecule-converge
+    exec:
+      label: "4.Molecule: apply the role to the pod"
+      commandLine: 'source $HOME/.bashrc && molecule converge'
+      workingDir: ${PROJECTS_ROOT}/devspaces/collections/ansible_collections/sample_namespace/sample_collection/extensions
+      group:
+        kind: run
+        isDefault: true
+      component: ansible-devspaces
+
+  - id: molecule-test
+    exec:
+      label: "5.Molecule: run the full molecule test"
+      commandLine: 'source $HOME/.bashrc && molecule test'
+      workingDir: ${PROJECTS_ROOT}/devspaces/collections/ansible_collections/sample_namespace/sample_collection/extensions
+      group:
+        kind: run
+        isDefault: true
+      component: ansible-devspaces
+
+  - id: molecule-destroy
+    exec:
+      label: "6.Molecule: reset the test pod back to a fresh instance"
+      commandLine: 'source $HOME/.bashrc && molecule destroy'
+      workingDir: ${PROJECTS_ROOT}/devspaces/collections/ansible_collections/sample_namespace/sample_collection/extensions
+      group:
+        kind: run
+        isDefault: true
+      component: ansible-devspaces
+
+events:
+  # postStart:
+  #   - "oc-install"
+  preStop:
+    - "molecule-destroy"
+
+projects:
+  - name: devspaces
+    git:
+      remotes:
+        origin: "https://gitlab.apps.corp/garabikboh/devspaces.git"
+      checkoutFrom:
+        revision: "master"
+        remote: origin
+
+  - name: ansible-ee-cez-rhel8
+    git:
+      remotes:
+        origin: "https://gitlab.apps.corp/garabikboh/aap-ee-cez-rhel8.git"
+      checkoutFrom:
+        revision: "master"
+        remote: origin
+
+  - name: ansible-ee-cez-rhel9
+    git:
+      remotes:
+        origin: "https://gitlab.apps.corp/garabikboh/aap-ee-cez-rhel9.git"
+      checkoutFrom:
+        revision: "master"
+        remote: origin
+
+  - name: atm
+    git:
+      remotes:
+        origin: "https://gitlab.apps.corp/ictsdatacentrum/atm.git"
+      checkoutFrom:
+        revision: "dev"
+        remote: origin

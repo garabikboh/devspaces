@@ -1,0 +1,24 @@
+{
+    "workbench.startupEditor": "none",
+    "explorer.confirmDragAndDrop": false,
+    "redhat.telemetry.enabled": true,
+    "git.enableSmartCommit": true,
+    "git.confirmSync": false,
+    "git.ignoreRebaseWarning": true,
+    "files.associations": {
+        "*.yaml": "ansible",
+        "*.yml": "ansible"
+    },
+    "ansible.ansible.path": "/usr/local/bin/ansible",
+    "ansible.python.interpreterPath": "/bin/python3.11",
+    "ansible.ansible.useFullyQualifiedCollectionNames": true,
+    "ansible.ansibleNavigator.path": "/usr/local/bin/ansible-navigator",
+    "ansible.completion.provideModuleOptionAliases": true,
+    "ansible.completion.provideRedirectModules": true,
+    "ansible.validation.enabled": true,
+    "ansible.validation.lint.enabled": true,
+    "ansible.validation.lint.path": "/usr/local/bin/ansible-lint",
+    "yaml.schemas": {
+      "https://raw.githubusercontent.com/devfile/api/main/schemas/latest/devfile.json": "devfile.yaml"
+    },
+}

@@ -1,0 +1,92 @@
+---
+# .yamllint
+# https://yamllint.readthedocs.io/en/stable/rules.html
+
+extends: default
+
+yaml-files:
+  - '*.yaml'
+  - '*.yml'
+  - .yamllint
+  - .ansible-lint
+
+ignore: |
+  vault/
+  temp/
+  logs/
+  collections/
+
+rules:
+  braces:
+    forbid: false
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+    min-spaces-inside-empty: -1
+    max-spaces-inside-empty: -1
+    level: warning
+  brackets:
+    forbid: false
+    max-spaces-inside: 1
+    min-spaces-inside: 1
+    min-spaces-inside-empty: -1
+    max-spaces-inside-empty: -1
+    level: warning
+  colons:
+    max-spaces-before: 0
+    max-spaces-after: 1
+    level: warning
+  commas:
+    max-spaces-before: 0
+    min-spaces-after: 1
+    max-spaces-after: 1
+    level: warning
+  comments:
+    require-starting-space: true
+    ignore-shebangs: true
+    min-spaces-from-content: 1
+    level: warning
+  comments-indentation: false
+  document-start:
+    present: true
+  document-end:
+    present: false
+  empty-lines:
+    max: 2
+    max-start: 0
+    max-end: 0
+    level: warning
+  empty-values:
+    forbid-in-block-mappings: false
+    forbid-in-flow-mappings: true
+    level: warning
+  hyphens:
+    max-spaces-after: 1
+    level: warning
+  indentation:
+    spaces: 2
+    indent-sequences: consistent
+    check-multi-line-strings: true
+    level: warning
+  key-duplicates: enable
+  key-ordering: disable
+  line-length:
+    max: 250
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
+    level: warning
+  new-lines:
+    type: unix
+    level: warning
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
+  quoted-strings:
+    quote-type: any
+    required: only-when-needed
+    level: warning
+  trailing-spaces:
+    level: warning
+  truthy:
+    allowed-values: [ "true", "false", "yes", "no" ]
+    check-keys: true
+    level: warning
